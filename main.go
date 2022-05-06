@@ -1,4 +1,5 @@
 package main
+import "os"
 
 import (
 	"embed"
@@ -46,9 +47,16 @@ func main() {
 	http.HandleFunc("/weather", serveWeather)
 	http.HandleFunc("/", serveHome(homePage))
 
+	// Fetch port from enviroment
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8042"
+	}
+
 	// Start the server
-	fmt.Println("Listening on http://localhost:8042")
-	log.Fatal(http.ListenAndServe(":8042", nil))
+	fmt.Println("Listening on http://localhost:" + port)
+	// Listen on port $port
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
 func serveWithParser(fn func(string) ([]SearchResult, error)) http.HandlerFunc {
